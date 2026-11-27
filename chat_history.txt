@@ -1,0 +1,380 @@
+==============================================================================
+CHAT HISTORY - TWO-MODEL REVENUE LIFT PROJECT
+==============================================================================
+
+Project folder : C:\Users\dbmic\OneDrive\Escritorio\Final Assignment
+Assistant      : OpenCode (MiMo-V2.6-Flash Free, provider "opencode")
+Session dates  : 26-27 November 2026
+Deadline       : 28 November 2026, 11:30 UTC
+Purpose        : Full record of the conversation - user messages word for word,
+                 what was done, decisions made by the user, and open questions.
+                 (Assignment requirement: "If you used any generative AI, please
+                 paste the URL to the chat history." This file is the local
+                 record of that chat.)
+
+
+==============================================================================
+PART A - USER MESSAGES, WORD FOR WORD
+==============================================================================
+
+--- Message 1 (start of session) ---
+
+"in the current project, the idea is make a two model business decision, two
+model cuz my business proposal is "business revenue lift according to churn and
+customer usage" so one model will be for churn and the other model for revenue,
+an then we'll make a simulation on those models to back the business proposal,
+understood? the current ipybn has some eda on the current dataset, the main things
+we will do is feature engineering, model building and then simulate and analyze
+lift on revenue an what variables will help us reach the better outcome, i woul
+like if you ake images of the important visualizaions in an assets folder, to make
+a presentation later"
+
+(A system note at that point put the session in PLAN MODE: discuss the plan, do
+not write files until the user approves.)
+
+--- Message 2 - answers to the four planning questions ---
+
+Q: Where should the work be executed? (local Python 3.8 has no packages; the
+   tutorial was built for Colab)
+A: "Google Colab (Recommended)"
+
+Q: How should the new work be organised?
+A: "New notebook, keep tutorial (Recommended)" - new .ipynb, tutorial.ipynb untouched
+
+Q: What should the second (revenue) model predict?
+A: "Monthly revenue per customer (rev_Mean)"
+
+Q: How should the presentation images be saved?
+A: "assets/ PNG at 200 dpi (Recommended)" - numbered PNGs for slide order
+
+--- Message 3 ---
+
+"implement"
+
+(A system note then removed Plan mode - implementation was allowed.)
+
+--- Message 4 (after a server restart cancelled a running job) ---
+
+"continue, also i want you to make a txt and a md with chat history, word for
+word. and also ut what you did and my decisions. make any questions needed"
+
+--- Message 5 (answers to the eight open questions) ---
+
+"my omnicampus name is: "ArielDeBrito". i will rerun it in colab. no, ust make
+me help notes i will write it myself. keep the honest one, the idea is make data
+driven decisions. for now lets keep that, not any ideas tho. its okay to know
+which models, evaluation metric, and score. for chat history is nice if it could
+be exported but due to this being local i asked you for the txt and the md. keep
+all 13 assets"
+
+
+==============================================================================
+PART B - THE PLAN THAT WAS PRESENTED AND APPROVED
+==============================================================================
+
+PLAN: TWO-MODEL "REVENUE LIFT" NOTEBOOK
+
+New file: revenue_lift_proposal.ipynb (rename to your Omnicampus account name at
+submission). tutorial.ipynb stays untouched as the reference.
+
+Environment: Google Colab + Drive. Cell 1 mounts Drive and cds to the project
+folder; a save(fig, "name.png") helper writes every key figure to assets/ at
+200 dpi AND displays it inline, so the deck images and the notebook output come
+from the same code path.
+
+0. Setup - path resolution that works in Colab and locally, create assets/,
+   define the save() helper, set a global RANDOM_STATE = 42.
+
+1. Data + EDA recap (compact, deck-oriented) - load/merge the two CSVs, then four
+   figures only: churn balance; revenue distribution split by churn;
+   missing-values bar; correlation heatmap.
+
+   FINDING ALREADY CONFIRMED AND WORTH BUILDING THE STORY ON: mean monthly revenue
+   is almost identical for stayers ($59.23) vs churners ($58.22). Churn is NOT
+   concentrated in high-value customers - so lift cannot come from "save the big
+   spenders". It has to come from the INTERSECTION: customers who are both
+   high-revenue and high-risk. That is exactly what a combined
+   p(churn) x revenue score ranks, and it justifies having two models instead
+   of one.
+
+2. Feature engineering - missingness policy (XGBoost handles NaN natively; keep
+   NaN, drop only numbcars >40%), and derived features grouped by business
+   reason: usage trend, overage economics, service quality, equipment,
+   value/tenure, household. Leakage guards measured, not guessed: avg6rev r=0.86,
+   avgrev r=0.75 vs rev_Mean -> excluded from the revenue model; totmrc_Mean
+   r=0.60 -> kept but flagged.
+
+3. MODEL A - CHURN (binary classification) - XGBoost classifier, stratified 70/30,
+   report name / metric / score in a formatted results box (the assignment
+   requires this explicitly): headline ROC-AUC + accuracy, precision/recall/F1,
+   confusion matrix, threshold chosen by business cost, feature importance by
+   GAIN split into intervenable levers vs fixed attributes.
+
+4. MODEL B - REVENUE (regression) - XGBoost regressor on rev_Mean (357 rows with
+   missing target dropped). MAE / RMSE / R2, actual-vs-predicted + residual plot,
+   mean-predictor baseline, feature importance.
+
+5. COMBINE -> REVENUE-AT-RISK & VALIDATION - risk_i = p(churn_i) x rev_i.
+   Decile/gains chart showing how much realised churned revenue the top 20% of
+   the score captures, vs random and vs churn-probability-only.
+
+6. SIMULATION - all assumptions as named constants: contact cost, contact rate,
+   acceptance rate, discount %, churn-reduction efficacy, contact budget.
+   Four scenarios compared on net revenue lift = retained revenue - discount cost
+   - campaign cost: (1) do nothing, (2) random, (3) churn-probability only,
+   (4) revenue-at-risk. Outputs: lift bar chart + summary table, 2D sensitivity
+   heatmap (efficacy x discount) with break-even contour, segment attribution of
+   the lift, scenario table.
+
+7. ASSETS EXPORT - numbered PNGs into assets/ so slide order = file order:
+   01_churn_balance, 02_revenue_by_churn, 03_missing_values,
+   04_correlation_heatmap, 05_usage_trend_vs_churn, 06_churn_model_eval,
+   07_churn_importance, 08_revenue_model_fit, 09_revenue_importance,
+   10_risk_deciles_gains, 11_lift_vs_baseline, 12_sensitivity_heatmap,
+   13_segment_levers.
+
+8. WRAP-UP - explicit results block (model names, metrics, scores), assumptions
+   register, proposal statement, what to cite.
+
+Two things flagged at the time: (1) the deadline is tomorrow, 28 Nov 11:30 UTC;
+(2) local Python has zero packages, so the plan was to install a local
+environment for a dry-run first.
+
+
+==============================================================================
+PART C - WHAT WAS ACTUALLY DONE
+==============================================================================
+
+--- C.1 Investigation (before any writing) ---
+
+Action                                        Result
+--------------------------------------------  ---------------------------------
+Listed the project                           tutorial.ipynb,
+                                             ENG_Company _A_ Dataset Overview.docx,
+                                             README.docx, telecom/Client.csv,
+                                             telecom/Record.csv
+Read tutorial.ipynb (46 cells)               walkthrough: load/merge, basic EDA
+                                             (missing values, churn ~50%,
+                                             eqpdays vs churn, pairplot),
+                                             label-encode + one XGBoost churn
+                                             model with accuracy/confusion
+                                             matrix/feature importance
+Read README.docx (assignment brief)          output = 15-slide PDF proposal +
+                                             notebook + references; graded on
+                                             the BUSINESS PROPOSAL (quantified
+                                             revenue lift); must state model
+                                             name / metric / score explicitly;
+                                             citations required; multiple
+                                             visualizations required;
+                                             DEADLINE 28 Nov 11:30 UTC
+Checked the local environment                Python 3.8.10 with NO packages
+                                             (no pandas/numpy/xgboost) ->
+                                             the tutorial was written for
+                                             Colab
+Measured the data                            Record.csv 100,000 x 51,
+                                             Client.csv 100,000 x 50, 1:1 join
+                                             on Customer_ID; 11 columns missing
+                                             in Record (max 0.9%); 32 columns
+                                             missing in Client (numbcars 49.4%,
+                                             dwllsize 38.3%, HHstatin 37.9%,
+                                             ownrent 33.7%, dwlltype 31.9%,
+                                             lor 30.2%, income 25.4%,
+                                             adults 23.0%, infobase 22.1%)
+Checked leakage candidates                   correlation with rev_Mean:
+                                             avg6rev 0.857, avgrev 0.751,
+                                             totmrc_Mean 0.602, totrev 0.520,
+                                             adjrev 0.516
+Checked churn vs revenue                     mean revenue: stayed $59.23,
+                                             churned $58.22 (-1.7%) -> churn is
+                                             NOT concentrated in high-value
+                                             customers
+
+--- C.2 Environment ---
+
+Created a local virtual environment at %TEMP%\opencode\venv with numpy 1.24.4,
+pandas 2.0.3, matplotlib 3.7.5, seaborn 0.13.2, scikit-learn 1.3.2,
+xgboost 1.7.6, nbformat, nbclient, ipykernel - used ONLY to dry-run and validate
+the notebook before the user runs it in Colab.
+
+Built the notebook with a generator script (build_nb.py) and executed it with
+nbclient (run_nb.py) so the delivered notebook contains real outputs.
+
+--- C.3 Files created ---
+
+revenue_lift_proposal.ipynb   the deliverable notebook (~47 cells, executed,
+                              outputs included)
+assets/01 ... 13 .png         13 presentation figures, 200 dpi, numbered in
+                              slide order
+chat_history.md / .txt        this record
+
+tutorial.ipynb was NOT modified. No dataset file was modified.
+
+--- C.4 Notebook structure as built ---
+
+ 1. Title + how the two models combine
+ 2. Setup (Colab mount guard, project-dir finder, show(fig, name) = save to
+    assets/ + display)
+ 3. 0.1 Market context - GSMA "The Mobile Economy 2026" ($7.6tn = 6.4% of global
+    GDP in 2025; 45% of operators prioritise monetisation) + HBR (acquiring costs
+    5-25x retaining; +5% retention -> +25-95% profit)
+ 4. Load & merge
+ 5. EDA recap -> figures 01-04 (churn balance, revenue by churn, missingness,
+    correlation heatmap)
+ 6. Feature engineering -> 19 engineered features + figure 05
+ 7. Leakage audit -> model-specific feature sets (churn 117 features, revenue 101
+    after excluding 15 leaky columns)
+ 8. Model A churn -> figures 06-07
+ 9. Model B revenue (naive vs honest) -> figures 08-09
+10. Revenue-at-risk + gains chart -> figure 10
+11. Simulation assumptions + four scenarios -> figures 11-12
+12. Base-rate evidence table + segment attribution -> figure 13
+13. MODEL RESULTS box (copy-paste onto slides)
+14. Proposal statement + assumptions register + slide map + submission note
+15. References (verified URLs)
+
+--- C.5 Model and simulation results produced ---
+
+MODEL A - XGBoost binary classifier (churn)
+  stratified 70/30, random_state=42, n_test = 30,000
+  ROC-AUC 0.6964
+  accuracy 0.6377 @ threshold 0.50 (baseline 0.5044)
+  F1 0.6380
+  at the campaign contact budget (top 10% of scores, cutoff p >= 0.72):
+  recall of churners 16.0%, precision 79.3% (vs 49.6% base rate) - the
+  contacted batch churns 1.6x more often than average
+  top gain features: equip_age_months, eqpdays, refurb_new, tenure_bucket,
+  months, equip_age_vs_tenure, hnd_price, overage_share_mou, hnd_webcap,
+  change_mou, usage_trend_qty ...
+  -> 10 of the top 15 tagged as actionable levers
+
+MODEL B - XGBoost regressor (rev_Mean), 99,643 rows (357 dropped)
+  naive/leaky version : R2 0.977, MAE $1.43  (top features avg3rev, avg6rev =
+                        proof of leakage)
+  HONEST version used : R2 0.888, MAE $7.34, RMSE $15.05
+                        (mean-predictor baseline MAE $28.82)
+
+COMBINED SCORE VALIDATION (figure 10) - share of realised churned revenue
+captured:
+  Top x% contacted | revenue-at-risk | churn only | revenue only | random
+  10%              | 32.6%           | 17.7%      | 26.5%       | 10%
+  20%              | 48.8%           | 34.9%      | 41.4%       | 20%
+  30%              | 61.2%           | 49.7%      | 53.9%       | 30%
+
+SIMULATION - top 10% = 9,964 customers contacted; contact $2.00, contact rate
+80%, acceptance 40%, discount 5%, efficacy 30%, horizon 1 month x12:
+  Scenario                Kept/mo    Cost/mo    Net/mo     Net/yr      ROI
+  Do nothing              -          -          $0         $0          -
+  Random                  $27,921    $25,468    $2,453     $29,439     0.10x
+  Churn probability only  $41,002    $24,646    $16,356    $196,271    0.66x
+  REVENUE-AT-RISK (A x B) $80,038    $38,489    $41,549    $498,586    1.08x
+
+  sensitivity: break-even efficacy ~10% at 0% discount, 15% at ~4%,
+               20% at ~8%, 30% at ~12%
+  vs churn-only: +$302,315/yr (+154%);  vs random: +$469,147/yr
+
+BASE-RATE EVIDENCE (why the levers are real)
+  overage >15% of minutes : 14.7% of base, churn 56.1% vs 48.0% (low),
+                            mean revenue $98.08 vs $46.25 -> 57% of the
+                            targeted list
+  equipment age           : churn 45.2% (<1y) -> 53.7% (1-1.8y) -> 54.1%
+                            (1.8-2y) -> 57.9% (>2y); churners 421 days vs 363
+  tenure                  : peak churn at 1-2y (51.8%), largest band 42,868
+                            customers
+  usage trend             : DID NOT HOLD (declining group shows lower risk)
+                            -> explicitly rejected as a lever
+
+--- C.6 Problems found and fixed during dry-runs ---
+
+ 1. KeyError: 'feature' in figure 05 (melt without var_name)
+    -> melt(..., var_name="feature", value_name="value")
+ 2. Notebook cell timed out (>300 s) training the revenue model
+    -> set tree_method="hist" explicitly (43 s instead of >300 s)
+ 3. Threshold chosen by max-F1 gave a misleading 0.33 cut-off (accuracy 0.595)
+    -> report metrics at 0.50 + add the campaign operating point (top 10% of
+       scores) with recall/precision, marked on the ROC curve
+ 4. mean_squared_error(squared=False) removed in scikit-learn >=1.6 (Colab)
+    -> np.sqrt(mean_squared_error(...))
+ 5. seaborn palette without hue deprecated/removed in 0.14 (Colab)
+    -> pass hue=..., then remove the legend; set_xticks + set_xticklabels
+ 6. "$58.21" etc. in markdown would be parsed by MathJax as inline math
+    -> auto-escape $ -> \$ in markdown cells that contain no $$ block; split the
+       $$...$$ formula into its own cell
+ 7. A % comment inside $$...$$ silently hid the formula legend
+    -> rewrote the equation cell with a proper legend line
+ 8. Cells missing nbformat id fields -> generator now assigns unique ids
+ 9. Lift table printed ROI rounded to whole numbers (0.0 / 1.0)
+    -> round money and ROI separately
+10. Lever text originally claimed "falling usage" as an offer driver - data did
+    not support it -> rewrote the recommendation around overage, equipment age
+    and the 1-2-year renewal window; documented the rejected hypothesis
+11. Base-rate table dropped the 1,972 customers with zero minutes used
+    (mou_Mean = 0), so its percentages disagreed with figure 13 (14.98% vs
+    14.7% high-overage) -> treat zero-minute customers as "no overage"
+    (fillna) so both tables use the same definition
+12. Figure 12 was unreadable on a slide: 144 overlapping value annotations and
+    a staircase of black boxes -> redrew with pcolormesh, values in $ thousands,
+    a single black BREAK-EVEN CONTOUR LINE, and a gold star marking the base case
+13. Figure 12 axes printed raw decimals (0.14, 0.3) instead of percentages
+    -> PercentFormatter(1.0) on both axes
+14. ROC legend said "recall 16% at 4% contacted" - the 4% is the FALSE-POSITIVE
+    rate, not the share contacted -> relabelled "catches 16% of churners,
+    4% false-alarm rate"
+
+
+==============================================================================
+PART D - DECISIONS TAKEN BY THE USER
+==============================================================================
+
+ 1. Business proposal: "business revenue lift according to churn and customer
+    usage" - two models (churn + revenue), combined in a simulation to back the
+    proposal.
+ 2. Executed in Google Colab, not locally.
+ 3. New notebook (originally revenue_lift_proposal.ipynb, later renamed to
+    ArielDeBrito.ipynb for submission); tutorial.ipynb kept untouched as
+    reference.
+ 4. Revenue target = rev_Mean (average monthly revenue per customer).
+ 5. Assets = numbered PNGs in assets/ at 200 dpi, in slide order.
+ 6. "implement" - approved the plan and authorised writing files (Plan mode
+    lifted).
+ 7. "continue" - resume after the server restart, and produce this chat history
+    in both .txt and .md, word for word, including actions and decisions, plus
+    any open questions.
+ 8. Omnicampus account name = "ArielDeBrito" -> notebook renamed to
+    ArielDeBrito.ipynb for submission.
+ 9. The user will re-run the notebook in Colab (reproducibility proof), so the
+    notebook ships with the local dry-run outputs only as a reference.
+10. No slide deck written by the assistant - the user writes the slides
+    themselves; the assistant provided slide_help_notes.md (structure,
+    per-slide notes, verbatim model/metric/score blocks, references, rubric
+    checklist, CFO-question prep).
+11. Keep the honest churn-horizon version - no conservative ~10% scenario
+    added; "the idea is make data driven decisions."
+12. Keep the simulation assumptions as they are (contact $2.00, 80% contact,
+    40% acceptance, 5% discount, 30% efficacy, top-10% budget).
+13. Model name / evaluation metric / score in words is sufficient - no
+    additional external citations requested beyond the ones already verified.
+14. Chat history: a local .txt + .md is acceptable (no shareable URL
+    available).
+15. Keep all 13 assets - no trimming.
+
+
+==============================================================================
+PART E - OPEN QUESTIONS FOR THE USER
+==============================================================================
+
+All questions from the first pass have now been answered (see Part D, items
+8-15). Remaining optional items, only if wanted:
+
+ 1. CHURN-HORIZON SENSITIVITY SCENARIO - declined for now (decision 11); can
+    be added later by changing one constant in the simulation cell.
+ 2. EXTRA TELECOM-SPECIFIC CITATIONS - declined for now (decision 13).
+ 3. TRIMMING ASSETS - declined; all 13 figures ship (decision 15).
+
+NEXT ACTION FOR THE USER: open ArielDeBrito.ipynb in Google Colab, uncomment
+the os.chdir(...) line in the setup cell to point at the project folder, run
+all cells, then export ArielDeBrito.pdf from the slides using
+slide_help_notes.md.
+
+==============================================================================
+END OF RECORD
+==============================================================================

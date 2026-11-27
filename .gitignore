@@ -1,0 +1,25 @@
+# --- Jupyter / Colab ---
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Office temp/lock files ---
+~$*
+
+# --- Logs & scratch ---
+*.log
+*.tmp
+
+# --- Superseded notebook builds (the deliverable is ArielDeBrito.ipynb) ---
+revenue_lift_proposal*.ipynb
